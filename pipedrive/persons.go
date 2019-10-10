@@ -79,6 +79,8 @@ type Person struct {
 	Label                           uint        `json:"label"`
 	BillingAddress                  string      `json:"d5d6ecba25dd34146d3b9d0f1bb34dedf384143a"`
 	DeliveryAddress                 string      `json:"fb3875ae1de17d63a1a0a9a7643bb677b95ae7fb"`
+	LeadExportWDS                   string      `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8"`
+	A1ExpireDate                    string      `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031"`
 }
 
 func (p Person) String() string {
@@ -160,14 +162,17 @@ func (s *PersonsService) AddFollower(ctx context.Context, id int, userID int) (*
 // PersonCreateOptions specifices the optional parameters to the
 // PersonsService.Create method.
 type PersonCreateOptions struct {
-	Name      string    `json:"name"`
-	OwnerID   uint      `json:"owner_id"`
-	OrgID     uint      `json:"org_id"`
-	Email     string    `json:"email"`
-	Phone     string    `json:"phone"`
-	VisibleTo VisibleTo `json:"visible_to"`
-	AddTime   Timestamp `json:"add_time"`
-	Label     uint      `json:"label"`
+	Name             string    `json:"name"`
+	OwnerID          uint      `json:"owner_id"`
+	OrgID            uint      `json:"org_id"`
+	Email            string    `json:"email"`
+	Phone            string    `json:"phone"`
+	VisibleTo        VisibleTo `json:"visible_to"`
+	AddTime          Timestamp `json:"add_time"`
+	Label            uint      `json:"label"`
+	NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
+	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
+	A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 }
 
 // Create a new person.
@@ -175,14 +180,17 @@ type PersonCreateOptions struct {
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/post_persons
 func (s *PersonsService) Create(ctx context.Context, opt *PersonCreateOptions) (*PersonResponse, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodPost, "/persons", nil, struct {
-		Name      string    `json:"name"`
-		OwnerID   uint      `json:"owner_id"`
-		OrgID     uint      `json:"org_id"`
-		Email     string    `json:"email"`
-		Phone     string    `json:"phone"`
-		Label     uint      `json:"label"`
-		VisibleTo VisibleTo `json:"visible_to"`
-		AddTime   string    `json:"add_time"`
+		Name             string    `json:"name"`
+		OwnerID          uint      `json:"owner_id"`
+		OrgID            uint      `json:"org_id"`
+		Email            string    `json:"email"`
+		Phone            string    `json:"phone"`
+		Label            uint      `json:"label"`
+		VisibleTo        VisibleTo `json:"visible_to"`
+		AddTime          string    `json:"add_time"`
+		NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
+		LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
+		A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 	}{
 		opt.Name,
 		opt.OwnerID,
@@ -192,6 +200,9 @@ func (s *PersonsService) Create(ctx context.Context, opt *PersonCreateOptions) (
 		opt.Label,
 		opt.VisibleTo,
 		opt.AddTime.FormatFull(),
+		opt.NewsletterStatus,
+		opt.LeadExportWDS,
+		opt.A1ExpireDate,
 	})
 
 	if err != nil {
@@ -212,14 +223,17 @@ func (s *PersonsService) Create(ctx context.Context, opt *PersonCreateOptions) (
 // PersonUpdateOptions specifices the optional parameters to the
 // PersonUpdateOptions.Update method.
 type PersonUpdateOptions struct {
-	Name            string    `json:"name,omitempty"`
-	OwnerID         uint      `json:"owner_id,omitempty"`
-	OrgID           uint      `json:"org_id,omitempty"`
-	Email           []Email   `json:"email,omitempty"`
-	Phone           string    `json:"phone,omitempty"`
-	VisibleTo       VisibleTo `json:"visible_to,omitempty"`
-	BillingAddress  string    `json:"d5d6ecba25dd34146d3b9d0f1bb34dedf384143a,omitempty"`
-	DeliveryAddress string    `json:"fb3875ae1de17d63a1a0a9a7643bb677b95ae7fb,omitempty"`
+	Name             string    `json:"name,omitempty"`
+	OwnerID          uint      `json:"owner_id,omitempty"`
+	OrgID            uint      `json:"org_id,omitempty"`
+	Email            []Email   `json:"email,omitempty"`
+	Phone            string    `json:"phone,omitempty"`
+	VisibleTo        VisibleTo `json:"visible_to,omitempty"`
+	BillingAddress   string    `json:"d5d6ecba25dd34146d3b9d0f1bb34dedf384143a,omitempty"`
+	DeliveryAddress  string    `json:"fb3875ae1de17d63a1a0a9a7643bb677b95ae7fb,omitempty"`
+	NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
+	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
+	A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 }
 
 // Update a specific person.

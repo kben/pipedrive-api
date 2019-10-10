@@ -121,6 +121,7 @@ type Deal struct {
 	LeadSource          uint   `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062"`
 	TemporaryLink       string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd"`
 	RideCosts           string `json:"31443a48d1405182dfccac9bf378bbe8216ffc9a"`
+	InvoiceCareDays     *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6"`
 }
 
 func (d Deal) String() string {
@@ -189,17 +190,21 @@ func (s *DealService) Find(ctx context.Context, term string) (*DealsResponse, *R
 type FilterOptions struct {
 	FilterID int    `url:"filter_id"`
 	Status   string `url:"status"`
+	Start    int    `url:"start,omitempty"`
+	Limit    int    `url:"limit,omitempty"`
 }
 
 // List deals.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/get_deals
-func (s *DealService) List(ctx context.Context, filterID int) (*DealsResponse, *Response, error) {
+func (s *DealService) List(ctx context.Context, filterID, start, limit int) (*DealsResponse, *Response, error) {
 	var err error
 	var req *http.Request
-	if filterID > 0 {
+	if filterID > 0 || start > 0 || limit > 0 {
 		req, err = s.client.NewRequest(http.MethodGet, "/deals", &FilterOptions{
 			FilterID: filterID,
+			Start:    start,
+			Limit:    limit,
 			Status:   "all_not_deleted",
 		}, nil)
 	} else {
@@ -279,11 +284,29 @@ type DealsUpdateOptions struct {
 	VisibleTo           uint   `json:"visible_to,omitempty"`
 	RequirementAnalysis string `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09,omitempty"`
 	TemporaryLink       string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
+	InvoiceCareDays     *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6,omitempty"`
 }
 
 // Update a deal.
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/put_deals_id
 func (s *DealService) Update(ctx context.Context, id int, opt *DealsUpdateOptions) (*Response, error) {
+	uri := fmt.Sprintf("/deals/%v", id)
+	req, err := s.client.NewRequest(http.MethodPut, uri, nil, opt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(ctx, req, nil)
+}
+
+type DealsUpdateForceOptions struct {
+	InvoiceCareDays *int `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6"`
+}
+
+// Update a deal.
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/put_deals_id
+func (s *DealService) UpdateForce(ctx context.Context, id int, opt *DealsUpdateForceOptions) (*Response, error) {
 	uri := fmt.Sprintf("/deals/%v", id)
 	req, err := s.client.NewRequest(http.MethodPut, uri, nil, opt)
 
