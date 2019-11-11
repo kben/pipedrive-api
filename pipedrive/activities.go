@@ -70,11 +70,17 @@ type ActivitiesReponse struct {
 	AdditionalData AdditionalData `json:"additional_data,omitempty"`
 }
 
+type ActivitiesFilterOptions struct {
+	FilterID int `url:"filter_id,omitempty"`
+	Start    int `url:"start,omitempty"`
+	Limit    int `url:"limit,omitempty"`
+}
+
 // List returns all activities assigned to a particular user
 //
 // https://developers.pipedrive.com/docs/api/v1/#!/Activities/get_activities
-func (s *ActivitiesService) List(ctx context.Context) (*ActivitiesReponse, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "/activities", nil, nil)
+func (s *ActivitiesService) List(ctx context.Context, afo *ActivitiesFilterOptions) (*ActivitiesReponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "/activities", afo, nil)
 
 	if err != nil {
 		return nil, nil, err

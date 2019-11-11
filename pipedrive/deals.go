@@ -122,6 +122,7 @@ type Deal struct {
 	TemporaryLink       string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd"`
 	RideCosts           string `json:"31443a48d1405182dfccac9bf378bbe8216ffc9a"`
 	InvoiceCareDays     *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6"`
+	ChristmasCare       uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c"`
 }
 
 func (d Deal) String() string {
@@ -187,9 +188,9 @@ func (s *DealService) Find(ctx context.Context, term string) (*DealsResponse, *R
 	return record, resp, nil
 }
 
-type FilterOptions struct {
-	FilterID int    `url:"filter_id"`
-	Status   string `url:"status"`
+type DealsFilterOptions struct {
+	FilterID int    `url:"filter_id,omitempty"`
+	Status   string `url:"status,omitempty"`
 	Start    int    `url:"start,omitempty"`
 	Limit    int    `url:"limit,omitempty"`
 }
@@ -197,20 +198,11 @@ type FilterOptions struct {
 // List deals.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/get_deals
-func (s *DealService) List(ctx context.Context, filterID, start, limit int) (*DealsResponse, *Response, error) {
+func (s *DealService) List(ctx context.Context, dfo *DealsFilterOptions) (*DealsResponse, *Response, error) {
 	var err error
 	var req *http.Request
-	if filterID > 0 || start > 0 || limit > 0 {
-		req, err = s.client.NewRequest(http.MethodGet, "/deals", &FilterOptions{
-			FilterID: filterID,
-			Start:    start,
-			Limit:    limit,
-			Status:   "all_not_deleted",
-		}, nil)
-	} else {
-		req, err = s.client.NewRequest(http.MethodGet, "/deals", nil, nil)
 
-	}
+	req, err = s.client.NewRequest(http.MethodGet, "/deals", dfo, nil)
 
 	if err != nil {
 		return nil, nil, err
@@ -285,6 +277,7 @@ type DealsUpdateOptions struct {
 	RequirementAnalysis string `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09,omitempty"`
 	TemporaryLink       string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
 	InvoiceCareDays     *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6,omitempty"`
+	ChristmasCare       uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c"`
 }
 
 // Update a deal.

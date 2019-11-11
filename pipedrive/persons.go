@@ -87,8 +87,8 @@ func (p Person) String() string {
 	return Stringify(p)
 }
 
-// PersonsRespose represents multiple persons response.
-type PersonsRespose struct {
+// PersonsResponse represents multiple persons response.
+type PersonsResponse struct {
 	Success        bool           `json:"success"`
 	Data           []Person       `json:"data"`
 	AdditionalData AdditionalData `json:"additional_data"`
@@ -112,17 +112,23 @@ type PersonAddFollowerResponse struct {
 	} `json:"data"`
 }
 
+type PersonFilterOptions struct {
+	FilterID int `url:"filter_id,omitempty"`
+	Start    int `url:"start,omitempty"`
+	Limit    int `url:"limit,omitempty"`
+}
+
 // List all persons.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/get_persons
-func (s *PersonsService) List(ctx context.Context) (*PersonsRespose, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "/persons", nil, nil)
+func (s *PersonsService) List(ctx context.Context, pfo *PersonFilterOptions) (*PersonsResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "/persons", pfo, nil)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var record *PersonsRespose
+	var record *PersonsResponse
 
 	resp, err := s.client.Do(ctx, req, &record)
 
