@@ -150,7 +150,7 @@ type ActivitiesCreateOptions struct {
 	DueTime      string      `json:"due_time,omitempty"`
 	Duration     string      `json:"duration,omitempty"`
 	UserID       uint        `json:"user_id,omitempty"`
-	DealID       uint        `json:"user_id,omitempty"`
+	DealID       uint        `json:"deal_id,omitempty"`
 	PersonID     uint        `json:"person_id,omitempty"`
 	Participants interface{} `json:"participants,omitempty"`
 	OrgID        uint        `json:"org_id,omitempty"`
