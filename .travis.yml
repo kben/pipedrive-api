@@ -3,8 +3,6 @@ language: go
 go:
   - "1.10.x"
   - 1.9.x
-  - 1.8.x
-  - 1.7.x
   - master
 
 repo_token: q3K2f9nSxazHhcN34eeCSeufIjY4cy6Cm
