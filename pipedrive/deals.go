@@ -143,6 +143,39 @@ type DealResponse struct {
 	AdditionalData AdditionalData `json:"additional_data,omitempty"`
 }
 
+// Participant represents a Pipedrive participant.
+type Participant struct {
+	ID       int `json:"id"`
+	PersonID struct {
+		Name  string `json:"name"`
+		Email []struct {
+			Value   string `json:"value"`
+			Primary bool   `json:"primary"`
+		} `json:"email"`
+		Phone []struct {
+			Value   string `json:"value"`
+			Primary bool   `json:"primary"`
+		} `json:"phone"`
+		Value int `json:"value"`
+	} `json:"person_id"`
+	AddTime         string `json:"add_time"`
+	Active          bool   `json:"active_flag"`
+	RelatedItemData struct {
+		DealId int    `json:"deal_id"`
+		Title  string `json:"title"`
+	} `json:"related_item_data"`
+	RelatedItemType string `json:"related_item_type"`
+	RelatedItemId   int    `json:"related_item_id"`
+	Person          Person `json:"person"`
+}
+
+// DealParticipantsResponse represents multiple deals response.
+type DealParticipantsResponse struct {
+	Success        bool           `json:"success,omitempty"`
+	Data           []Participant  `json:"data,omitempty"`
+	AdditionalData AdditionalData `json:"additional_data,omitempty"`
+}
+
 // ListUpdates about a deal.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/get_deals_id_flow
@@ -209,6 +242,36 @@ func (s *DealService) List(ctx context.Context, dfo *DealsFilterOptions) (*Deals
 	}
 
 	var record *DealsResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
+type DealParticipantsFilterOptions struct {
+	Start int `url:"start,omitempty"`
+	Limit int `url:"limit,omitempty"`
+}
+
+// List deals participants.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/get_deals_id_participants
+func (s *DealService) ListParticipants(ctx context.Context, id int, dfo *DealParticipantsFilterOptions) (*DealParticipantsResponse, *Response, error) {
+	var err error
+	var req *http.Request
+
+	uri := fmt.Sprintf("/deals/%v/participants", id)
+	req, err = s.client.NewRequest(http.MethodGet, uri, dfo, nil)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *DealParticipantsResponse
 
 	resp, err := s.client.Do(ctx, req, &record)
 
