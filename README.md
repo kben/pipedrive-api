@@ -1,6 +1,6 @@
 # Golang Pipedrive client
 
-[![Build Status](https://travis-ci.org/kben/go-pipedrive.svg?branch=master)](https://travis-ci.org/kben/go-pipedrive)
+[![Build Status](https://travis-ci.org/kben/pipedrive-api.svg?branch=master)](https://travis-ci.org/kben/pipedrive-api)
 
 Requires Go version 1.7 or greater.
 
