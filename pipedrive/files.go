@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 // FilesService handles files related
@@ -127,7 +128,7 @@ func (s *FilesService) GetDownloadLinkByID(id int) (string, *http.Request, error
 // Upload a file.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Files/post_files
-func (s *FilesService) Upload(ctx context.Context, fileName string, filePath string) (*FileResponse, *Response, error) {
+func (s *FilesService) Upload(ctx context.Context, fieldName string, filePath string) (*FileResponse, *Response, error) {
 	file, err := os.Open(filePath)
 
 	if err != nil {
@@ -148,9 +149,9 @@ func (s *FilesService) Upload(ctx context.Context, fileName string, filePath str
 		return nil, nil, err
 	}
 
-	var body *bytes.Buffer
+	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(fileName, fileInfo.Name())
+	part, err := writer.CreateFormFile(fieldName, fileInfo.Name())
 
 	if err != nil {
 		return nil, nil, err
@@ -174,6 +175,42 @@ func (s *FilesService) Upload(ctx context.Context, fileName string, filePath str
 
 	resp, err := s.client.Do(ctx, req, &record)
 
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
+// Upload a file-buffer.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Files/post_files
+func (s *FilesService) UploadBuf(ctx context.Context, personID int, fileName string, fileContents []byte) (*FileResponse, *Response, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("file", fileName)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	part.Write(fileContents)
+
+	if err = writer.Close(); err != nil {
+		return nil, nil, err
+	}
+
+	writer.WriteField("person_id", strconv.Itoa(personID))
+	writer.Close()
+
+	req, err := s.client.NewRequest(http.MethodPost, "/files", nil, body)
+	if err != nil {
+		return nil, nil, err
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	var record *FileResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
 	if err != nil {
 		return nil, resp, err
 	}

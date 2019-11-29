@@ -130,32 +130,37 @@ func (c *Client) NewRequest(method, url string, opt interface{}, body interface{
 	}
 
 	u, err := c.createRequestUrl(url, opt)
-
 	if err != nil {
 		return nil, err
 	}
 
-	var buf io.ReadWriter
-
+	var request *http.Request
 	if body != nil {
-		buf = new(bytes.Buffer)
-		enc := json.NewEncoder(buf)
-		enc.SetEscapeHTML(false)
-		err := enc.Encode(body)
-
+		if b, ok := body.(*bytes.Buffer); ok {
+			request, err = http.NewRequest(method, u, b)
+			if err != nil {
+				return nil, err
+			}
+			/* CONTENT TYPE MUST BE SET OUTSIDE THIS FUNCTION! */
+		} else {
+			buf := new(bytes.Buffer)
+			enc := json.NewEncoder(buf)
+			enc.SetEscapeHTML(false)
+			err := enc.Encode(body)
+			if err != nil {
+				return nil, err
+			}
+			request, err = http.NewRequest(method, u, buf)
+			if err != nil {
+				return nil, err
+			}
+			request.Header.Set("Content-Type", "application/json")
+		}
+	} else {
+		request, err = http.NewRequest(method, u, nil)
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	request, err := http.NewRequest(method, u, buf)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if body != nil {
-		request.Header.Set("Content-Type", "application/json")
 	}
 
 	return request, nil

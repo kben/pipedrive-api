@@ -178,7 +178,7 @@ type PersonCreateOptions struct {
 	Label            uint      `json:"label"`
 	NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
 	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
-	A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
+	A1ExpireDate     Timestamp `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 }
 
 // Create a new person.
@@ -208,7 +208,7 @@ func (s *PersonsService) Create(ctx context.Context, opt *PersonCreateOptions) (
 		opt.AddTime.FormatFull(),
 		opt.NewsletterStatus,
 		opt.LeadExportWDS,
-		opt.A1ExpireDate,
+		opt.A1ExpireDate.Format(),
 	})
 
 	if err != nil {
@@ -239,7 +239,7 @@ type PersonUpdateOptions struct {
 	DeliveryAddress  string    `json:"fb3875ae1de17d63a1a0a9a7643bb677b95ae7fb,omitempty"`
 	NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
 	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
-	A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
+	A1ExpireDate     Timestamp `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 }
 
 // Update a specific person.
