@@ -1,6 +1,6 @@
 # Golang Pipedrive client
 
-[![Build Status](https://travis-ci.org/Genert/go-pipedrive.svg?branch=master)](https://travis-ci.org/Genert/go-pipedrive)
+[![Build Status](https://travis-ci.org/kben/go-pipedrive.svg?branch=master)](https://travis-ci.org/kben/go-pipedrive)
 
 Requires Go version 1.7 or greater.
 
@@ -36,13 +36,13 @@ Requires Go version 1.7 or greater.
 ## Installation
 
 ```go
-go get -v github.com/genert/pipedrive-api/pipedrive
+go get -v github.com/kben/pipedrive-api/pipedrive
 ```
 
 ## Usage
 
 ```go
-import "github.com/genert/pipedrive-api/pipedrive"
+import "github.com/kben/pipedrive-api/pipedrive"
 ```
 
 Construct a new Pipedrive client, then use the various services on the client to

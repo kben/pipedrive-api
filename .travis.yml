@@ -21,6 +21,6 @@ install:
 script:
   - go get -t -v ./...
   - go generate -x ./... && git diff --exit-code; code=$?; git checkout -- .; (exit $code) # Check that go generate ./... produces a zero diff; clean up any changes afterwards.
-  - go tool vet .
-  - go test -v -race ./...
-  - go test -v -tags=integration -run=^$ ./test/integration # Check that integration test builds successfully
+#  - go tool vet .
+#  - go test -v -race ./...
+#  - go test -v -tags=integration -run=^$ ./test/integration # Check that integration test builds successfully
