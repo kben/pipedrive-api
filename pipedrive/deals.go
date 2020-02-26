@@ -50,6 +50,7 @@ type Deal struct {
 		PeopleCount int         `json:"people_count"`
 		OwnerID     int         `json:"owner_id"`
 		Address     interface{} `json:"address"`
+		ActiveFlag  bool        `json:"active_flag"`
 		CcEmail     string      `json:"cc_email"`
 		Value       int         `json:"value"`
 	} `json:"org_id"`
@@ -112,17 +113,18 @@ type Deal struct {
 		OwnerID     int         `json:"owner_id"`
 		Address     interface{} `json:"address"`
 		CcEmail     string      `json:"cc_email"`
-		Value       float32     `json:"value"`
+		Value       int         `json:"value"`
 	} `json:"eb2a2df8945c29118a01d324c58fbf6cef7bfd43"`
-	WantedStartTime     string `json:"a3114acce61bb930180af173b395d76f42af8794"`
-	RequirementAnalysis string `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09"`
-	DepartureCurrentCT  string `json:"ffd2a712d781417ef17a33b3540d3ecd8d945f76"`
-	ArrivalNextCT       string `json:"f5bb67b24aec5f9733be8b3402bf1fe5b1ac6ed6"`
-	LeadSource          uint   `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062"`
-	TemporaryLink       string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd"`
-	RideCosts           string `json:"31443a48d1405182dfccac9bf378bbe8216ffc9a"`
-	InvoiceCareDays     *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6"`
-	ChristmasCare       uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c"`
+	WantedStartTime           string `json:"a3114acce61bb930180af173b395d76f42af8794"`
+	RequirementAnalysis       string `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09"`
+	RequirementAnalysisAnonym string `json:"118f01b7ec442b78faef7bbcd61795ac15b6fed7"`
+	DepartureCurrentCT        string `json:"ffd2a712d781417ef17a33b3540d3ecd8d945f76"`
+	ArrivalNextCT             string `json:"f5bb67b24aec5f9733be8b3402bf1fe5b1ac6ed6"`
+	LeadSource                uint   `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062"`
+	TemporaryLink             string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd"`
+	RideCosts                 string `json:"31443a48d1405182dfccac9bf378bbe8216ffc9a"`
+	InvoiceCareDays           *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6"`
+	ChristmasCare             uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c"`
 }
 
 func (d Deal) String() string {
@@ -327,20 +329,21 @@ func (s *DealService) Merge(ctx context.Context, id int, opt *DealsMergeOptions)
 // DealsUpdateOptions specifices the optional parameters to the
 // DealService.Update method.
 type DealsUpdateOptions struct {
-	Title               string `json:"title,omitempty"`
-	Value               string `json:"value,omitempty"`
-	Currency            string `json:"currency,omitempty"`
-	UserID              uint   `json:"user_id,omitempty"`
-	PersonID            uint   `json:"person_id,omitempty"`
-	OrganizationID      uint   `json:"org_id,omitempty"`
-	StageID             uint   `json:"stage_id,omitempty"`
-	Status              string `json:"status,omitempty"`
-	LostReason          string `json:"lost_reason,omitempty"`
-	VisibleTo           uint   `json:"visible_to,omitempty"`
-	RequirementAnalysis string `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09,omitempty"`
-	TemporaryLink       string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
-	InvoiceCareDays     *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6,omitempty"`
-	ChristmasCare       uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c"`
+	Title                     string `json:"title,omitempty"`
+	Value                     string `json:"value,omitempty"`
+	Currency                  string `json:"currency,omitempty"`
+	UserID                    uint   `json:"user_id,omitempty"`
+	PersonID                  uint   `json:"person_id,omitempty"`
+	OrganizationID            uint   `json:"org_id,omitempty"`
+	StageID                   uint   `json:"stage_id,omitempty"`
+	Status                    string `json:"status,omitempty"`
+	LostReason                string `json:"lost_reason,omitempty"`
+	VisibleTo                 uint   `json:"visible_to,omitempty"`
+	RequirementAnalysis       string `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09,omitempty"`
+	RequirementAnalysisAnonym string `json:"118f01b7ec442b78faef7bbcd61795ac15b6fed7,omitempty"`
+	TemporaryLink             string `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
+	InvoiceCareDays           *int   `json:"c1feb6a1b169b6caf54776fa85cc8452b27d0fd6,omitempty"`
+	ChristmasCare             uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c,omitempty"`
 }
 
 // Update a deal.
@@ -447,22 +450,23 @@ func (s *DealService) DeleteAttachedProduct(ctx context.Context, dealID int, pro
 // DealCreateOptions specifices the optional parameters to the
 // DealsService.Create method.
 type DealCreateOptions struct {
-	Title               string    `json:"title"`
-	Value               string    `json:"value"`
-	Currency            string    `json:"currency"`
-	UserID              uint      `json:"user_id"`
-	PersonID            uint      `json:"person_id"`
-	OrgID               uint      `json:"org_id"`
-	StageID             uint      `json:"stage_id"`
-	Status              string    `json:"status"`
-	Probability         uint      `json:"probability"`
-	LostReason          string    `json:"lost_reason"`
-	AddTime             Timestamp `json:"add_time"`
-	VisibleTo           VisibleTo `json:"visible_to"`
-	RequirementAnalysis string    `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09"`
-	WantedStartTime     Timestamp `json:"a3114acce61bb930180af173b395d76f42af8794"`
-	TemporaryLink       string    `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
-	LeadSource          uint      `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062,omitempty"`
+	Title                     string    `json:"title,omitempty"`
+	Value                     string    `json:"value,omitempty"`
+	Currency                  string    `json:"currency,omitempty"`
+	UserID                    uint      `json:"user_id,omitempty"`
+	PersonID                  uint      `json:"person_id,omitempty"`
+	OrgID                     uint      `json:"org_id,omitempty"`
+	StageID                   uint      `json:"stage_id,omitempty"`
+	Status                    string    `json:"status,omitempty"`
+	Probability               uint      `json:"probability,omitempty"`
+	LostReason                string    `json:"lost_reason,omitempty"`
+	AddTime                   Timestamp `json:"add_time,omitempty"`
+	VisibleTo                 VisibleTo `json:"visible_to,omitempty"`
+	RequirementAnalysis       string    `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09,omitempty"`
+	RequirementAnalysisAnonym string    `json:"118f01b7ec442b78faef7bbcd61795ac15b6fed7,omitempty"`
+	WantedStartTime           Timestamp `json:"a3114acce61bb930180af173b395d76f42af8794,omitempty"`
+	TemporaryLink             string    `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
+	LeadSource                uint      `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062,omitempty"`
 }
 
 // Create a new deal.
@@ -470,22 +474,23 @@ type DealCreateOptions struct {
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/post_deals
 func (s *DealService) Create(ctx context.Context, opt *DealCreateOptions) (*DealResponse, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodPost, "/deals", nil, struct {
-		Title               string    `json:"title"`
-		Value               string    `json:"value"`
-		Currency            string    `json:"currency"`
-		UserID              uint      `json:"user_id"`
-		PersonID            uint      `json:"person_id"`
-		OrgID               uint      `json:"org_id"`
-		StageID             uint      `json:"stage_id"`
-		Status              string    `json:"status"`
-		Probability         uint      `json:"probability"`
-		LostReason          string    `json:"lost_reason"`
-		AddTime             string    `json:"add_time"`
-		VisibleTo           VisibleTo `json:"visible_to"`
-		RequirementAnalysis string    `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09"`
-		WantedStartTime     string    `json:"a3114acce61bb930180af173b395d76f42af8794"`
-		TemporaryLink       string    `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
-		LeadSource          uint      `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062,omitempty"`
+		Title                     string    `json:"title,omitempty"`
+		Value                     string    `json:"value,omitempty"`
+		Currency                  string    `json:"currency,omitempty"`
+		UserID                    uint      `json:"user_id,omitempty"`
+		PersonID                  uint      `json:"person_id,omitempty"`
+		OrgID                     uint      `json:"org_id,omitempty"`
+		StageID                   uint      `json:"stage_id,omitempty"`
+		Status                    string    `json:"status,omitempty"`
+		Probability               uint      `json:"probability,omitempty"`
+		LostReason                string    `json:"lost_reason,omitempty"`
+		AddTime                   string    `json:"add_time,omitempty"`
+		VisibleTo                 VisibleTo `json:"visible_to,omitempty"`
+		RequirementAnalysis       string    `json:"56d3d40c37c0db60fff576ae73ba2fea0d58dc09,omitempty"`
+		RequirementAnalysisAnonym string    `json:"118f01b7ec442b78faef7bbcd61795ac15b6fed7,omitempty"`
+		WantedStartTime           string    `json:"a3114acce61bb930180af173b395d76f42af8794,omitempty"`
+		TemporaryLink             string    `json:"4fe88fad67d8dcbc17d18d9ee1faac55122249fd,omitempty"`
+		LeadSource                uint      `json:"5d4fbabc9b032aeb3df515d9c66994d6892ee062,omitempty"`
 	}{
 		opt.Title,
 		opt.Value,
@@ -500,10 +505,32 @@ func (s *DealService) Create(ctx context.Context, opt *DealCreateOptions) (*Deal
 		opt.AddTime.FormatFull(),
 		opt.VisibleTo,
 		opt.RequirementAnalysis,
+		opt.RequirementAnalysisAnonym,
 		opt.WantedStartTime.Format(),
 		opt.TemporaryLink,
 		opt.LeadSource,
 	})
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *DealResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
+// Get a deal.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/get_deals_id
+func (s *DealService) Get(ctx context.Context, dealID int) (*DealResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, fmt.Sprintf("/deals/%d", dealID), nil, nil)
 
 	if err != nil {
 		return nil, nil, err

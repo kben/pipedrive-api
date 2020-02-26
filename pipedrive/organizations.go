@@ -72,6 +72,8 @@ type Organization struct {
 	OwnerName                       string      `json:"owner_name"`
 	CcEmail                         string      `json:"cc_email"`
 	Phone                           string      `json:"3eb8874b7a3c9f3fe4f5b6435d4d009b15ec0c77"`
+	InvoiceData                     string      `json:"7f5141c5ab13a0cb73d82b295a69146a07044329"`
+	A1Contact                       string      `json:"0b58d861cef3873286b061f9a8d6f9844c685ca4"`
 }
 
 func (o Organization) String() string {
@@ -92,11 +94,20 @@ type OrganizationResponse struct {
 	AdditionalData AdditionalData `json:"additional_data,omitempty"`
 }
 
+type OrganizationFilterOptions struct {
+	UserID    int    `url:"user_id,omitempty"`
+	FirstChar string `url:"first_char,omitempty"`
+	FilterID  int    `url:"filter_id,omitempty"`
+	Start     int    `url:"start,omitempty"`
+	Limit     int    `url:"limit,omitempty"`
+	Sort      string `url:"sort,omitempty"`
+}
+
 // List all organizations.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Organizations/get_organizations
-func (s *OrganizationsService) List(ctx context.Context) (*OrganizationsResponse, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "/organizations", nil, nil)
+func (s *OrganizationsService) List(ctx context.Context, ofo *OrganizationFilterOptions) (*OrganizationsResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "/organizations", ofo, nil)
 
 	if err != nil {
 		return nil, nil, err
@@ -221,6 +232,7 @@ type OrganizationCreateOptions struct {
 	VisibleTo VisibleTo `json:"visible_to"`
 	AddTime   Timestamp `json:"add_time"`
 	Label     uint      `json:"label"`
+	Address   string    `json:"address,omitempty"`
 }
 
 // Create a new organizations.
@@ -233,13 +245,36 @@ func (s *OrganizationsService) Create(ctx context.Context, opt *OrganizationCrea
 		Label     uint      `json:"label"`
 		VisibleTo VisibleTo `json:"visible_to"`
 		AddTime   string    `json:"add_time"`
+		Address   string    `json:"address,omitempty"`
 	}{
 		opt.Name,
 		opt.OwnerID,
 		opt.Label,
 		opt.VisibleTo,
 		opt.AddTime.FormatFull(),
+		opt.Address,
 	})
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *OrganizationResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
+// Get a organizations.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Organizations/get_organizations_id
+func (s *OrganizationsService) Get(ctx context.Context, orgID int) (*OrganizationResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, fmt.Sprintf("/organizations/%d", orgID), nil, nil)
 
 	if err != nil {
 		return nil, nil, err

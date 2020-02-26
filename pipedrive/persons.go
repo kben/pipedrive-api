@@ -31,29 +31,37 @@ type Person struct {
 		ActiveFlag bool   `json:"active_flag"`
 		Value      int    `json:"value"`
 	} `json:"owner_id"`
-	OrgID                       interface{} `json:"org_id"`
-	Name                        string      `json:"name"`
-	FirstName                   string      `json:"first_name"`
-	LastName                    string      `json:"last_name"`
-	OpenDealsCount              int         `json:"open_deals_count"`
-	RelatedOpenDealsCount       int         `json:"related_open_deals_count"`
-	ClosedDealsCount            int         `json:"closed_deals_count"`
-	RelatedClosedDealsCount     int         `json:"related_closed_deals_count"`
-	ParticipantOpenDealsCount   int         `json:"participant_open_deals_count"`
-	ParticipantClosedDealsCount int         `json:"participant_closed_deals_count"`
-	EmailMessagesCount          int         `json:"email_messages_count"`
-	ActivitiesCount             int         `json:"activities_count"`
-	DoneActivitiesCount         int         `json:"done_activities_count"`
-	UndoneActivitiesCount       int         `json:"undone_activities_count"`
-	ReferenceActivitiesCount    int         `json:"reference_activities_count"`
-	FilesCount                  int         `json:"files_count"`
-	NotesCount                  int         `json:"notes_count"`
-	FollowersCount              int         `json:"followers_count"`
-	WonDealsCount               int         `json:"won_deals_count"`
-	RelatedWonDealsCount        int         `json:"related_won_deals_count"`
-	LostDealsCount              int         `json:"lost_deals_count"`
-	RelatedLostDealsCount       int         `json:"related_lost_deals_count"`
-	ActiveFlag                  bool        `json:"active_flag"`
+	OrgID struct {
+		Name        string      `json:"name"`
+		PeopleCount int         `json:"people_count"`
+		OwnerID     int         `json:"owner_id"`
+		Address     interface{} `json:"address"`
+		ActiveFlag  bool        `json:"active_flag"`
+		CcEmail     string      `json:"cc_email"`
+		Value       int         `json:"value"`
+	} `json:"org_id"`
+	Name                        string `json:"name"`
+	FirstName                   string `json:"first_name"`
+	LastName                    string `json:"last_name"`
+	OpenDealsCount              int    `json:"open_deals_count"`
+	RelatedOpenDealsCount       int    `json:"related_open_deals_count"`
+	ClosedDealsCount            int    `json:"closed_deals_count"`
+	RelatedClosedDealsCount     int    `json:"related_closed_deals_count"`
+	ParticipantOpenDealsCount   int    `json:"participant_open_deals_count"`
+	ParticipantClosedDealsCount int    `json:"participant_closed_deals_count"`
+	EmailMessagesCount          int    `json:"email_messages_count"`
+	ActivitiesCount             int    `json:"activities_count"`
+	DoneActivitiesCount         int    `json:"done_activities_count"`
+	UndoneActivitiesCount       int    `json:"undone_activities_count"`
+	ReferenceActivitiesCount    int    `json:"reference_activities_count"`
+	FilesCount                  int    `json:"files_count"`
+	NotesCount                  int    `json:"notes_count"`
+	FollowersCount              int    `json:"followers_count"`
+	WonDealsCount               int    `json:"won_deals_count"`
+	RelatedWonDealsCount        int    `json:"related_won_deals_count"`
+	LostDealsCount              int    `json:"lost_deals_count"`
+	RelatedLostDealsCount       int    `json:"related_lost_deals_count"`
+	ActiveFlag                  bool   `json:"active_flag"`
 	Phone                       []struct {
 		Value   string `json:"value"`
 		Primary bool   `json:"primary"`
@@ -81,6 +89,7 @@ type Person struct {
 	DeliveryAddress                 string      `json:"fb3875ae1de17d63a1a0a9a7643bb677b95ae7fb"`
 	LeadExportWDS                   string      `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8"`
 	A1ExpireDate                    string      `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031"`
+	A1Upload                        string      `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9"`
 }
 
 func (p Person) String() string {
@@ -240,14 +249,42 @@ type PersonUpdateOptions struct {
 	NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
 	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
 	A1ExpireDate     Timestamp `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
+	A1Upload         string    `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9,omitempty"`
 }
 
 // Update a specific person.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/put_persons_id
 func (s *PersonsService) Update(ctx context.Context, id int, opt *PersonUpdateOptions) (*PersonResponse, *Response, error) {
+
 	uri := fmt.Sprintf("/persons/%v", id)
-	req, err := s.client.NewRequest(http.MethodPut, uri, nil, opt)
+	req, err := s.client.NewRequest(http.MethodPut, uri, nil, struct {
+		Name             string    `json:"name,omitempty"`
+		OwnerID          uint      `json:"owner_id,omitempty"`
+		OrgID            uint      `json:"org_id,omitempty"`
+		Email            []Email   `json:"email,omitempty"`
+		Phone            string    `json:"phone,omitempty"`
+		VisibleTo        VisibleTo `json:"visible_to,omitempty"`
+		BillingAddress   string    `json:"d5d6ecba25dd34146d3b9d0f1bb34dedf384143a,omitempty"`
+		DeliveryAddress  string    `json:"fb3875ae1de17d63a1a0a9a7643bb677b95ae7fb,omitempty"`
+		NewsletterStatus uint      `json:"4ba5027f64252634ad94493411cc251f1371786c,omitempty"`
+		LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
+		A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
+		A1Upload         string    `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9,omitempty"`
+	}{
+		opt.Name,
+		opt.OwnerID,
+		opt.OrgID,
+		opt.Email,
+		opt.Phone,
+		opt.VisibleTo,
+		opt.BillingAddress,
+		opt.DeliveryAddress,
+		opt.NewsletterStatus,
+		opt.LeadExportWDS,
+		opt.A1ExpireDate.Format(),
+		opt.A1Upload,
+	})
 
 	if err != nil {
 		return nil, nil, err

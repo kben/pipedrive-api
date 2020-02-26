@@ -68,11 +68,16 @@ type FilesResponse struct {
 	AdditionalData AdditionalData `json:"additional_data,omitempty"`
 }
 
+type FilesFilterOptions struct {
+	Start int `url:"start,omitempty"`
+	Limit int `url:"limit,omitempty"`
+}
+
 // List all files.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Files/get_files
-func (s *FilesService) List(ctx context.Context) (*FilesResponse, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "/files", nil, nil)
+func (s *FilesService) List(ctx context.Context, ffo *FilesFilterOptions) (*FilesResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "/files", ffo, nil)
 
 	if err != nil {
 		return nil, nil, err
