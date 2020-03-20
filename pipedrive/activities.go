@@ -149,6 +149,7 @@ type ActivitiesCreateOptions struct {
 	DueDate      string      `json:"due_date,omitempty"`
 	DueTime      string      `json:"due_time,omitempty"`
 	Duration     string      `json:"duration,omitempty"`
+	Note         string      `json:"note,omitempty"`
 	UserID       uint        `json:"user_id,omitempty"`
 	DealID       uint        `json:"deal_id,omitempty"`
 	PersonID     uint        `json:"person_id,omitempty"`

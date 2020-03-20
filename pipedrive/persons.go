@@ -70,6 +70,7 @@ type Person struct {
 	FirstChar                       string      `json:"first_char"`
 	UpdateTime                      string      `json:"update_time"`
 	AddTime                         string      `json:"add_time"`
+	Birthday                        string      `json:"birthday"`
 	VisibleTo                       string      `json:"visible_to"`
 	PictureID                       interface{} `json:"picture_id"`
 	NextActivityDate                interface{} `json:"next_activity_date"`
@@ -395,6 +396,33 @@ func (s *PersonsService) Get(ctx context.Context, personID int) (*PersonResponse
 	}
 
 	var record *PersonResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
+type PersonDealsOptions struct {
+	ID    int `url:"id"`
+	Start int `url:"start,omitempty"`
+	Limit int `url:"limit,omitempty"`
+}
+
+// Lists deals associated with a person.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/get_persons_id_deals
+func (s *PersonsService) GetDeals(ctx context.Context, pdo *PersonDealsOptions) (*DealsResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, fmt.Sprintf("/persons/%d/deals", pdo.ID), pdo, nil)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *DealsResponse
 
 	resp, err := s.client.Do(ctx, req, &record)
 
