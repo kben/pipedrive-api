@@ -546,3 +546,32 @@ func (s *DealService) Get(ctx context.Context, dealID int) (*DealResponse, *Resp
 
 	return record, resp, nil
 }
+
+type DealActivitiesOptions struct {
+	ID      int    `url:"id"`
+	Start   int    `url:"start,omitempty"`
+	Limit   int    `url:"limit,omitempty"`
+	Done    int    `url:"done,omitempty"`
+	exclude string `url:"exclude,omitempty"`
+}
+
+// Lists activities associated with a deal.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/get_deals_id_activities
+func (s *DealService) GetActivities(ctx context.Context, dap *DealActivitiesOptions) (*ActivitiesReponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, fmt.Sprintf("/deals/%d/activities", dap.ID), dap, nil)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *ActivitiesReponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}

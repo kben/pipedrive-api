@@ -134,9 +134,9 @@ type OrganizationUpdateOptions struct {
 	Phone     string    `json:"3eb8874b7a3c9f3fe4f5b6435d4d009b15ec0c77,omitempty"`
 }
 
-// Update a specific person.
+// Update a specific organizations.
 //
-// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Organizations/put_persons_id
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Organizations/org_id
 func (s *OrganizationsService) Update(ctx context.Context, id int, opt *OrganizationUpdateOptions) (*OrganizationResponse, *Response, error) {
 	uri := fmt.Sprintf("/organizations/%v", id)
 	req, err := s.client.NewRequest(http.MethodPut, uri, nil, opt)
