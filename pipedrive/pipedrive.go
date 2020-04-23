@@ -56,7 +56,7 @@ type Client struct {
 	NoteFields        *NoteFieldsService
 	Notes             *NotesService
 	Recents           *RecentsService
-	SearchResults     *SearchResultsService
+	ItemSearch        *ItemSearchService
 	Users             *UsersService
 	Filters           *FiltersService
 	Activities        *ActivitiesService
@@ -322,7 +322,7 @@ func NewClient(options *Config) *Client {
 	c.NoteFields = (*NoteFieldsService)(&c.common)
 	c.Notes = (*NotesService)(&c.common)
 	c.Recents = (*RecentsService)(&c.common)
-	c.SearchResults = (*SearchResultsService)(&c.common)
+	c.ItemSearch = (*ItemSearchService)(&c.common)
 	c.Users = (*UsersService)(&c.common)
 	c.Filters = (*FiltersService)(&c.common)
 	c.Activities = (*ActivitiesService)(&c.common)

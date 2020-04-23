@@ -119,6 +119,23 @@ func (s *ActivitiesService) GetByID(ctx context.Context, id int) (*ActivitiesRep
 	return record, resp, nil
 }
 
+// ActivitiesCreateOptions specifices the optional parameters to the
+// ActivitiesService.Update method.
+type ActivitiesCreateOptions struct {
+	Subject      string      `json:"subject,omitempty"`
+	Done         uint8       `json:"done,omitempty"`
+	Type         string      `json:"type,omitempty"`
+	DueDate      string      `json:"due_date,omitempty"`
+	DueTime      string      `json:"due_time,omitempty"`
+	Duration     string      `json:"duration,omitempty"`
+	Note         string      `json:"note,omitempty"`
+	UserID       uint        `json:"user_id,omitempty"`
+	DealID       uint        `json:"deal_id,omitempty"`
+	PersonID     uint        `json:"person_id,omitempty"`
+	Participants interface{} `json:"participants,omitempty"`
+	OrgID        uint        `json:"org_id,omitempty"`
+}
+
 // Create an activity.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Activities/post_activities
@@ -140,30 +157,20 @@ func (s *ActivitiesService) Create(ctx context.Context, opt *ActivitiesCreateOpt
 	return record, resp, nil
 }
 
-// ActivitiesCreateOptions specifices the optional parameters to the
-// ActivitiesService.Update method.
-type ActivitiesCreateOptions struct {
-	Subject      string      `json:"subject,omitempty"`
-	Done         uint8       `json:"done,omitempty"`
-	Type         string      `json:"type,omitempty"`
-	DueDate      string      `json:"due_date,omitempty"`
-	DueTime      string      `json:"due_time,omitempty"`
-	Duration     string      `json:"duration,omitempty"`
-	Note         string      `json:"note,omitempty"`
-	UserID       uint        `json:"user_id,omitempty"`
-	DealID       uint        `json:"deal_id,omitempty"`
-	PersonID     uint        `json:"person_id,omitempty"`
-	Participants interface{} `json:"participants,omitempty"`
-	OrgID        uint        `json:"org_id,omitempty"`
+// ActivitiesUpdateOptions
+type ActivitiesUpdateOptions struct {
+	Subject string `json:"subject,omitempty"`
+	Type    string `json:"type,omitempty"`
+	UserID  uint   `json:"user_id,omitempty"`
 }
 
 // Update an activity
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Activities/put_activities_id
-func (s *ActivitiesService) Update(ctx context.Context, id int, opt *ActivitiesCreateOptions) (*ActivityResponse, *Response, error) {
+func (s *ActivitiesService) Update(ctx context.Context, id int, auo *ActivitiesUpdateOptions) (*ActivityResponse, *Response, error) {
 	uri := fmt.Sprintf("/activities/%v", id)
-	req, err := s.client.NewRequest(http.MethodPut, uri, opt, nil)
 
+	req, err := s.client.NewRequest(http.MethodPut, uri, nil, auo)
 	if err != nil {
 		return nil, nil, err
 	}
