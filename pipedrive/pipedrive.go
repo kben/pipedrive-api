@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/google/go-querystring/query"
+	"golang.org/x/oauth2"
 )
 
 const (
@@ -38,6 +39,7 @@ const (
 type Client struct {
 	// HTTP client used to communicate with the API.
 	client *http.Client
+	oauth2 *oauth2.Config
 
 	// Base URL for API requests. Defaults to the public Pipedrive API, but can be
 	// set to a domain endpoint to use. BaseURL should
@@ -86,6 +88,7 @@ type service struct {
 type Config struct {
 	APIKey        string
 	CompanyDomain string
+	OAuth2        *oauth2.Config
 }
 
 type Rate struct {
@@ -225,7 +228,14 @@ func (c *Client) Do(ctx context.Context, request *http.Request, v interface{}) (
 		}, err
 	}
 
-	resp, err := c.client.Do(request)
+	var err error
+	var resp *http.Response
+	if token := ctx.Value("OAUTH2"); token != nil {
+		client := c.oauth2.Client(ctx, token.(*oauth2.Token))
+		resp, err = client.Do(request)
+	} else {
+		resp, err = c.client.Do(request)
+	}
 
 	if err != nil {
 		select {
@@ -313,6 +323,7 @@ func NewClient(options *Config) *Client {
 		client:  http.DefaultClient,
 		BaseURL: baseURL,
 		apiKey:  options.APIKey,
+		oauth2:  options.OAuth2,
 	}
 
 	c.common.client = c
