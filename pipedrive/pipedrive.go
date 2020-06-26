@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -232,6 +233,9 @@ func (c *Client) Do(ctx context.Context, request *http.Request, v interface{}) (
 	var resp *http.Response
 	if token := ctx.Value("OAUTH2"); token != nil {
 		client := c.oauth2.Client(ctx, token.(*oauth2.Token))
+		parameters := request.URL.Query()
+		parameters.Del("api_token")
+		request.URL.RawQuery = parameters.Encode()
 		resp, err = client.Do(request)
 	} else {
 		resp, err = c.client.Do(request)
