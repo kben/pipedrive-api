@@ -91,6 +91,7 @@ type Person struct {
 	LeadExportWDS                   string      `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8"`
 	A1ExpireDate                    string      `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031"`
 	A1Upload                        string      `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9"`
+	PersonTitle                     string      `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821"`
 }
 
 func (p Person) String() string {
@@ -251,6 +252,7 @@ type PersonUpdateOptions struct {
 	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
 	A1ExpireDate     Timestamp `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 	A1Upload         string    `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9,omitempty"`
+	PersonTitle      string    `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821,omitempty"`
 }
 
 // Update a specific person.
@@ -272,6 +274,7 @@ func (s *PersonsService) Update(ctx context.Context, id int, opt *PersonUpdateOp
 		LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
 		A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 		A1Upload         string    `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9,omitempty"`
+		PersonTitle      string    `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821,omitempty"`
 	}{
 		opt.Name,
 		opt.OwnerID,
@@ -285,6 +288,7 @@ func (s *PersonsService) Update(ctx context.Context, id int, opt *PersonUpdateOp
 		opt.LeadExportWDS,
 		opt.A1ExpireDate.Format(),
 		opt.A1Upload,
+		opt.PersonTitle,
 	})
 
 	if err != nil {

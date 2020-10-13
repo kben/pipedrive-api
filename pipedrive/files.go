@@ -190,7 +190,7 @@ func (s *FilesService) Upload(ctx context.Context, fieldName string, filePath st
 // Upload a file-buffer.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Files/post_files
-func (s *FilesService) UploadBuf(ctx context.Context, personID int, fileName string, fileContents []byte) (*FileResponse, *Response, error) {
+func (s *FilesService) UploadBuf(ctx context.Context, personID, dealID int, fileName string, fileContents []byte) (*FileResponse, *Response, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", fileName)
@@ -204,7 +204,12 @@ func (s *FilesService) UploadBuf(ctx context.Context, personID int, fileName str
 		return nil, nil, err
 	}
 
-	writer.WriteField("person_id", strconv.Itoa(personID))
+	if personID != 0 {
+		writer.WriteField("person_id", strconv.Itoa(personID))
+	}
+	if dealID != 0 {
+		writer.WriteField("deal_id", strconv.Itoa(dealID))
+	}
 	writer.Close()
 
 	req, err := s.client.NewRequest(http.MethodPost, "/files", nil, body)
