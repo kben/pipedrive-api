@@ -3,7 +3,6 @@ package pipedrive
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -493,8 +492,6 @@ func (s *PersonsService) Search(ctx context.Context, pso *PersonSearchOptions) (
 	var record *PersonSearchResponse
 
 	resp, err := s.client.Do(ctx, req, &record)
-
-	log.Printf("err: %+v, resp: %+v", err, resp)
 
 	if err != nil {
 		return nil, resp, err
