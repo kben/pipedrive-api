@@ -3,6 +3,7 @@ package pipedrive
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -121,6 +122,38 @@ type PersonAddFollowerResponse struct {
 		PersonID int    `json:"person_id"`
 		AddTime  string `json:"add_time"`
 	} `json:"data"`
+}
+
+// PersonSearch represents a search item.
+type PersonSearch struct {
+	ResultScore float32 `json:"result_score"`
+	Item        struct {
+		ID    int    `json:"id"`
+		Type  string `json:"type"`
+		Name  string `json:"name"`
+		Phone []struct {
+			Value string `json:"value"`
+		} `json:"phone"`
+		Email []Email `json:"email"`
+		Owner struct {
+			ID int `json:"id"`
+		} `json:"owner"`
+		VisibleTo    string `json:"visible_to"`
+		Organization struct {
+			ID      int    `json:"id"`
+			Name    string `json:"name"`
+			Address string `json:"address"`
+		} `json:"organization"`
+	} `json:"item"`
+}
+
+// PersonSearchResponse represents search response.
+type PersonSearchResponse struct {
+	Success bool `json:"success"`
+	Data    struct {
+		Items []PersonSearch `json:"items"`
+	} `json:"data`
+	AdditionalData AdditionalData `json:"additional_data"`
 }
 
 type PersonFilterOptions struct {
@@ -252,7 +285,7 @@ type PersonUpdateOptions struct {
 	LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
 	A1ExpireDate     Timestamp `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 	A1Upload         string    `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9,omitempty"`
-	PersonTitle      string    `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821,omitempty"`
+	PersonTitle      int       `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821,omitempty"`
 }
 
 // Update a specific person.
@@ -274,7 +307,7 @@ func (s *PersonsService) Update(ctx context.Context, id int, opt *PersonUpdateOp
 		LeadExportWDS    string    `json:"71df7f223a0dd3b9314412b2cf37d3ee55a657d8,omitempty"`
 		A1ExpireDate     string    `json:"df8b1b69dfad26a8a0a4b57bcf0016ce519a7031,omitempty"`
 		A1Upload         string    `json:"815b394dd12a36bdbfd6215a0aad5bc4d35be6a9,omitempty"`
-		PersonTitle      string    `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821,omitempty"`
+		PersonTitle      int       `json:"100ace766d7a2bd9c51bb1b2c3ff71410beb5821,omitempty"`
 	}{
 		opt.Name,
 		opt.OwnerID,
@@ -429,6 +462,39 @@ func (s *PersonsService) GetDeals(ctx context.Context, pdo *PersonDealsOptions) 
 	var record *DealsResponse
 
 	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
+type PersonSearchOptions struct {
+	Term           string `url:"term"`
+	Fields         string `url:"fields,omitempty"`
+	ExactMatch     bool   `url:"exact_match,omitempty"`
+	OrganizationId int    `url:"organization_id,omitempty"`
+	IncludeFields  string `url:"include_fields,omitempty"`
+	Start          int    `url:"start,omitempty"`
+	Limit          int    `url:"limit,omitempty"`
+}
+
+// Search persons.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/get_persons_search
+func (s *PersonsService) Search(ctx context.Context, pso *PersonSearchOptions) (*PersonSearchResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "/persons/search", pso, nil)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *PersonSearchResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	log.Printf("err: %+v, resp: %+v", err, resp)
 
 	if err != nil {
 		return nil, resp, err
