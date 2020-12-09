@@ -64,6 +64,7 @@ type Person struct {
 	ActiveFlag                  bool   `json:"active_flag"`
 	Phone                       []struct {
 		Value   string `json:"value"`
+		Label   string `json:"label"`
 		Primary bool   `json:"primary"`
 	} `json:"phone"`
 	Email                           []Email     `json:"email"`
