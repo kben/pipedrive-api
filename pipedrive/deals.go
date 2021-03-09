@@ -124,6 +124,7 @@ type Deal struct {
 	ChristmasCare      uint    `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c"`
 	FirstCareBegin     string  `json:"b927d845c72cbb2f90844a65206776edac927684"`
 	ServiceFee         float64 `json:"0825a408763de9f63cc80be74fe55ed8b625efa4"`
+	Feedback           string  `json:"ab85caab3c817a41d2583c74fb9184b72647d90a"`
 }
 
 func (d Deal) String() string {
@@ -343,6 +344,7 @@ type DealsUpdateOptions struct {
 	ChristmasCare   uint   `json:"9bfc1ae5cf091620979b3ac015f2f3f1a74d165c,omitempty"`
 	AgencyInCharge  uint   `json:"eb2a2df8945c29118a01d324c58fbf6cef7bfd43,omitempty"`
 	ServiceFee      string `json:"0825a408763de9f63cc80be74fe55ed8b625efa4,omitempty"`
+	Feedback        string `json:"ab85caab3c817a41d2583c74fb9184b72647d90a,omitempty"`
 }
 
 // Update a deal.
