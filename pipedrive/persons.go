@@ -470,6 +470,33 @@ func (s *PersonsService) GetDeals(ctx context.Context, pdo *PersonDealsOptions) 
 	return record, resp, nil
 }
 
+type PersonFilesOptions struct {
+	ID    int `url:"id"`
+	Start int `url:"start,omitempty"`
+	Limit int `url:"limit,omitempty"`
+}
+
+// Lists files associated with a person.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/getPersonFiles
+func (s *PersonsService) GetFiles(ctx context.Context, pfo *PersonFilesOptions) (*FilesResponse, *Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, fmt.Sprintf("/persons/%d/files", pfo.ID), pfo, nil)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var record *FilesResponse
+
+	resp, err := s.client.Do(ctx, req, &record)
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return record, resp, nil
+}
+
 type PersonSearchOptions struct {
 	Term           string `url:"term"`
 	Fields         string `url:"fields,omitempty"`
