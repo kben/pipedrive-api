@@ -43,7 +43,8 @@ type Deal struct {
 			Value   string `json:"value"`
 			Primary bool   `json:"primary"`
 		} `json:"phone"`
-		Value int `json:"value"`
+		Value      int  `json:"value"`
+		ActiveFlag bool `json:"active_flag"`
 	} `json:"person_id"`
 	OrgID struct {
 		Name        string      `json:"name"`
