@@ -421,6 +421,29 @@ func (s *DealService) DeleteParticipant(ctx context.Context, dealID int, partici
 	return s.client.Do(ctx, req, nil)
 }
 
+type addParticipantOptions struct {
+	ID       int `json:"id"`
+	PersonID int `json:"person_id"`
+}
+
+// AddParticipant add participant in a deal.
+//
+// Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/addDealParticipant
+func (s *DealService) AddParticipant(ctx context.Context, dealID int, participantID int) (*Response, error) {
+	apo := &addParticipantOptions{
+		ID:       dealID,
+		PersonID: participantID,
+	}
+	uri := fmt.Sprintf("/deals/%v/participants", dealID)
+	req, err := s.client.NewRequest(http.MethodPost, uri, apo, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(ctx, req, nil)
+}
+
 // Delete a deal.
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Deals/delete_deals_id

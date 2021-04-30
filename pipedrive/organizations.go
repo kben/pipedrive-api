@@ -75,6 +75,7 @@ type Organization struct {
 	InvoiceData                     string      `json:"7f5141c5ab13a0cb73d82b295a69146a07044329"`
 	A1Contact                       string      `json:"0b58d861cef3873286b061f9a8d6f9844c685ca4"`
 	GeneralContact                  string      `json:"ecdb757edaa6c2dcc67afb342a1a70eb17591210"`
+	ContractContact                 string      `json:"742461df518118dc9d838ab2c6532af3fd876abb"`
 }
 
 func (o Organization) String() string {
