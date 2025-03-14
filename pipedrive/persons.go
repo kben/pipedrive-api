@@ -229,12 +229,21 @@ type PersonCreateOptions struct {
 //
 // Pipedrive API docs: https://developers.pipedrive.com/docs/api/v1/#!/Persons/post_persons
 func (s *PersonsService) Create(ctx context.Context, opt *PersonCreateOptions) (*PersonResponse, *Response, error) {
+
+	phone := []struct {
+		Value string `json:"value"`
+	}{
+		{opt.Phone},
+	}
+
 	req, err := s.client.NewRequest(http.MethodPost, "/persons", nil, struct {
-		Name             string    `json:"name"`
-		OwnerID          uint      `json:"owner_id"`
-		OrgID            uint      `json:"org_id"`
-		Email            string    `json:"email"`
-		Phone            string    `json:"phone"`
+		Name    string `json:"name"`
+		OwnerID uint   `json:"owner_id"`
+		OrgID   uint   `json:"org_id"`
+		Email   string `json:"email"`
+		Phone   []struct {
+			Value string `json:"value"`
+		} `json:"phone"`
 		Label            uint      `json:"label"`
 		VisibleTo        VisibleTo `json:"visible_to"`
 		AddTime          string    `json:"add_time"`
@@ -246,7 +255,7 @@ func (s *PersonsService) Create(ctx context.Context, opt *PersonCreateOptions) (
 		opt.OwnerID,
 		opt.OrgID,
 		opt.Email,
-		opt.Phone,
+		phone,
 		opt.Label,
 		opt.VisibleTo,
 		opt.AddTime.FormatFull(),
